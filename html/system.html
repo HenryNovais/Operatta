@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Sistema</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock" class="active"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Configurações</h1>
+                <div class="admin-actions">
+                    <button class="btn btn-secondary" id="toggle-theme">Trocar Tema</button>
+                </div>
+            </header>
+            <section class="dashboard-section">
+                <h3>Sobre o Operatta</h3>
+                <p>O Operatta é um sistema de gestão especializado para hamburguerias, projetado para otimizar operações, gerenciar vendas, estoque e finanças em tempo real.
+                    <br><br>Versão: 1.0.0
+                    <br><br>Data de Lançamento: 01/06/2025
+                    <br><br>Desenvolvido por Operatta Desenvolvimento Web.</p>
+            <br><br><br><br><br>
+            </section>
+            <section class="dashboard-section">
+                <h3>Suporte</h3>
+                <div class="support-buttons">
+                    <a href="https://wa.me/5511999999999" target="_blank" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                    <a href="https://t.me/operattaSupport" target="_blank" class="btn btn-secondary"><i class="fab fa-telegram"></i> Telegram</a>
+                    <a href="https://instagram.com/operatta" target="_blank" class="btn btn-secondary"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="https://instagram.com/operatta" target="_blank" class="btn btn-secondary"><i class="fab fa-youtube"></i> YouTube</a>
+                    <a href="mailto:suporte@operatta.com" class="btn btn-secondary"><i class="fas fa-envelope"></i> Email</a>
+                    <a href="tel:+5511999999999" class="btn btn-secondary"><i class="fas fa-phone"></i> Telefone</a>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/script.js"></script>
+</html>

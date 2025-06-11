@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Financeiro</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance" class="active"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Financeiro</h1>
+                <div class="finance-actions">
+                    <select id="date-filter" class="btn btn-secondary">
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Semana Atual</option>
+                        <option value="month">Mês Atual</option>
+                        <option value="custom">Período Personalizado</option>
+                    </select>
+                    <input type="date" id="custom-start-date" style="display: none;" class="btn btn-secondary">
+                    <input type="date" id="custom-end-date" style="display: none;" class="btn btn-secondary">
+                    <button class="btn btn-primary" id="add-income-btn">Lançar Receita</button>
+                    <button class="btn btn-primary" id="add-expense-btn">Lançar Despesa</button>
+                    <button class="btn btn-secondary" id="export-btn">Exportar Dados</button>
+                    <button class="btn btn-secondary" id="report-btn">Gerar Relatórios</button>
+                </div>
+            </header>
+            <div class="finance-dashboard">
+                <div class="dashboard-card">
+                    <h3>Visão Geral</h3>
+                    <p><strong>Saldo Atual:</strong> <span id="current-balance">R$ 0.00</span></p>
+                    <p><strong>Receitas:</strong> <span id="period-income">R$ 0.00</span></p>
+                    <p><strong>Despesas:</strong> <span id="period-expenses">R$ 0.00</span></p>
+                    <p><strong>Lucro/Prejuízo:</strong> <span id="profit-loss" style="color: gray;">R$ 0.00</span></p>
+                    <canvas id="cash-flow-chart"></canvas>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Despesas por Categoria</h3>
+                    <canvas id="expense-category-chart"></canvas>
+                </div>
+            </div>
+            <div class="finance-sections">
+                <div class="finance-section">
+                    <h3>Receitas</h3>
+                    <table class="finance-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Forma de Pagamento</th>
+                                <th>Pedidos Vinculados</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="income-list"></tbody>
+                    </table>
+                </div>
+                <div class="finance-section">
+                    <h3>Despesas</h3>
+                    <table class="finance-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Categoria</th>
+                                <th>Fornecedor</th>
+                                <th>Forma de Pagamento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-list"></tbody>
+                    </table>
+                </div>
+                <div class="finance-section">
+                    <h3>Contas a Pagar</h3>
+                    <p><strong>Total a Pagar:</strong> <span id="total-payable">R$ 0.00</span></p>
+                    <table class="finance-table">
+                        <thead>
+                            <tr>
+                                <th>Data de Vencimento</th>
+                                <th>Valor</th>
+                                <th>Fornecedor</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payable-list"></tbody>
+                    </table>
+                </div>
+                <div class="finance-section">
+                    <h3>Contas a Receber</h3>
+                    <p><strong>Total a Receber:</strong> <span id="total-receivable">R$ 0.00</span></p>
+                    <table class="finance-table">
+                        <thead>
+                            <tr>
+                                <th>Data de Vencimento</th>
+                                <th>Valor</th>
+                                <th>Cliente</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receivable-list"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="finance-form" class="item-form">
+                <h2 id="form-title"></h2>
+                <form id="finance-form-data">
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="finance-date">Data</label>
+                            <input type="date" id="finance-date" required>
+                        </div>
+                        <div>
+                            <label for="finance-value">Valor</label>
+                            <input type="number" step="0.01" id="finance-value" required>
+                        </div>
+                    </div>
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="finance-category">Categoria</label>
+                            <select id="finance-category" required>
+                                <option value="">Selecione</option>
+                                <option value="lanches">Lanches</option>
+                                <option value="bebidas">Bebidas</option>
+                                <option value="acompanhamentos">Acompanhamentos</option>
+                                <option value="aluguel">Aluguel</option>
+                                <option value="salarios">Salários</option>
+                                <option value="insumos">Insumos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="finance-supplier-client">Fornecedor/Cliente</label>
+                            <input type="text" id="finance-supplier-client" required>
+                        </div>
+                    </div>
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="finance-payment-method">Forma de Pagamento</label>
+                            <select id="finance-payment-method" required>
+                                <option value="">Selecione</option>
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="cartao">Cartão</option>
+                                <option value="pix">Pix</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="finance-order-link">Pedidos Vinculados (opcional)</label>
+                            <input type="text" id="finance-order-link">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-finance-form">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="/js/script.js"></script>
+</html>

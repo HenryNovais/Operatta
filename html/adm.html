@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Administração</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin" class="active"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Administração</h1>
+                <div class="admin-actions">
+                    <button class="btn btn-primary" id="save-btn">Salvar</button>
+                    <button class="btn btn-secondary" id="cancel-btn">Cancelar</button>
+                </div>
+            </header>
+            <section class="admin-dashboard">
+                <div class="dashboard-card">
+                    <h3>Visão Geral do Sistema</h3>
+                    <p>Usuários Ativos: <span id="active-users">0</span></p>
+                    <p>Vendas Recentes: <span id="recent-sales">R$ 0.00</span></p>
+                    <p>Estoque Baixo: <span id="low-stock">0 itens</span></p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Notificações</h3>
+                    <ul id="notifications">
+                        <li>Atualização pendente disponível.</li>
+                        <li>Estoque crítico de pão detected.</li>
+                    </ul>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Atividade Recente</h3>
+                    <ul id="recent-activity">
+                        <li>Usuário João cadastrou produto "Hambúrguer Clássico" às 10:15.</li>
+                        <li>Usuário Maria editou configuração de pagamento às 09:50.</li>
+                    </ul>
+                </div>
+            </section>
+            <section class="admin-sections">
+                <div class="admin-section">
+                    <h3>Gerenciamento de Usuários</h3>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" id="add-user-btn">Adicionar Usuário</button>
+                        <input type="text" id="search-user" class="admin-search" placeholder="Buscar usuário">
+                        <select id="filter-user" class="btn btn-secondary">
+                            <option value="">Filtrar por</option>
+                            <option value="active">Ativos</option>
+                            <option value="inactive">Inativos</option>
+                            <option value="admin">Administradores</option>
+                        </select>
+                    </div>
+                    <table class="admin-table" id="user-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Login</th>
+                                <th>Perfil</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>João Silva</td>
+                                <td>joao.silva</td>
+                                <td>Gerente</td>
+                                <td>Ativo</td>
+                                <td>
+                                    <select class="btn-select">
+                                        <option value="">Ações</option>
+                                        <option value="edit">Editar</option>
+                                        <option value="disable">Desativar</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Maria Oliveira</td>
+                                <td>maria.oliveira</td>
+                                <td>Atendente</td>
+                                <td>Inativo</td>
+                                <td>
+                                    <select class="btn-select">
+                                        <option value="">Ações</option>
+                                        <option value="edit">Editar</option>
+                                        <option value="activate">Ativar</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="user-form" class="admin-form" style="display:none;">
+                        <h4 id="form-title">Adicionar Usuário</h4>
+                        <form id="user-form-data">
+                            <div class="form-group">
+                                <label for="user-name">Nome</label>
+                                <input type="text" id="user-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="user-login">Login</label>
+                                <input type="text" id="user-login" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="user-password">Senha</label>
+                                <input type="password" id="user-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="user-role">Perfil</label>
+                                <select id="user-role" required>
+                                    <option value="atendente">Atendente</option>
+                                    <option value="gerente">Gerente</option>
+                                    <option value="admin">Administrador</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                <button type="button" class="btn btn-secondary" id="cancel-user-form">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="admin-section">
+                    <h3>Configurações do Sistema</h3>
+                    <div class="config-group">
+                        <h4>Informações da Empresa</h4>
+                        <div class="form-group">
+                            <label for="company-name">Nome</label>
+                            <input type="text" id="company-name" value="Hamburgueria Operatta">
+                        </div>
+                        <div class="form-group">
+                            <label for="company-address">Endereço</label>
+                            <input type="text" id="company-address" value="Rua das Delícias, 123">
+                        </div>
+                        <div class="form-group">
+                            <label for="company-cnpj">CNPJ</label>
+                            <input type="text" id="company-cnpj" value="12.345.678/0001-90">
+                        </div>
+                    </div>
+                    <div class="config-group">
+                        <h4>Configurações de Pagamento</h4>
+                        <div class="form-group">
+                            <label>Formas de Pagamento</label>
+                            <div>
+                                <input type="checkbox" id="payment-cash" checked> <label for="payment-cash">Dinheiro</label>
+                                <input type="checkbox" id="payment-card" checked> <label for="payment-card">Cartão</label>
+                                <input type="checkbox" id="payment-pix"> <label for="payment-pix">Pix</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="config-group">
+                        <h4>Backup e Restauração</h4>
+                        <button class="btn btn-secondary" id="backup-btn">Realizar Backup</button>
+                        <button class="btn btn-secondary" id="restore-btn">Restaurar</button>
+                    </div>
+                </div>
+                <div class="admin-section">
+                    <h3>Relatórios e Análises</h3>
+                    <div class="section-actions">
+                        <select id="report-type" class="btn btn-secondary">
+                            <option value="">Selecione um Relatório</option>
+                            <option value="sales">Vendas</option>
+                            <option value="stock">Estoque</option>
+                            <option value="finance">Financeiro</option>
+                            <option value="performance">Desempenho</option>
+                        </select>
+                        <button class="btn btn-primary" id="generate-report">Gerar Relatório</button>
+                        <button class="btn btn-secondary" id="export-report">Exportar</button>
+                    </div>
+                    <div id="report-output" class="report-output"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/script.js"></script>
+</html>

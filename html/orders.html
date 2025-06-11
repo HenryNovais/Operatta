@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Pedidos</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders" class="active"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Pedidos</h1>
+                <div class="order-actions">
+                    <button class="btn btn-primary" id="new-order-btn">Novo Pedido</button>
+                    <button class="btn btn-secondary" id="real-time-btn">Tempo Real</button>
+                </div>
+            </header>
+            <section class="content-section active" id="orders">
+                <div class="order-section" id="new-order-section">
+                    <div class="carousel-container">
+                        <h2 class="carousel-title">Promoções do Dia</h2>
+                        <div class="carousel" id="promotions-carousel">
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Produto">
+                                <h3>Promoção 1</h3>
+                                <p>R$ 15.90</p>
+                                <div class="quantity-controls">
+                                    <button class="btn-quantity">-</button>
+                                    <input type="text" class="quantity-input" value="0" readonly>
+                                    <button class="btn-quantity">+</button>
+                                </div>
+                                <button class="btn-add">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container">
+                        <h2 class="carousel-title">Combos</h2>
+                        <div class="carousel" id="combos-carousel">
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Produto">
+                                <h3>Combo 1</h3>
+                                <p>R$ 25.00</p>
+                                <div class="quantity-controls">
+                                    <button class="btn-quantity">-</button>
+                                    <input type="text" class="quantity-input" value="0" readonly>
+                                    <button class="btn-quantity">+</button>
+                                </div>
+                                <button class="btn-add">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container">
+                        <h2 class="carousel-title">Sanduíches</h2>
+                        <div class="carousel" id="sandwiches-carousel">
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Produto">
+                                <h3>Sanduíche 1</h3>
+                                <p>R$ 12.50</p>
+                                <div class="quantity-controls">
+                                    <button class="btn-quantity">-</button>
+                                    <input type="text" class="quantity-input" value="0" readonly>
+                                    <button class="btn-quantity">+</button>
+                                </div>
+                                <button class="btn-add">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container">
+                        <h2 class="carousel-title">Bebidas</h2>
+                        <div class="carousel" id="drinks-carousel">
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Produto">
+                                <h3>Bebida 1</h3>
+                                <p>R$ 5.00</p>
+                                <div class="quantity-controls">
+                                    <button class="btn-quantity">-</button>
+                                    <input type="text" class="quantity-input" value="0" readonly>
+                                    <button class="btn-quantity">+</button>
+                                </div>
+                                <button class="btn-add">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container">
+                        <h2 class="carousel-title">Sobremesas</h2>
+                        <div class="carousel" id="desserts-carousel">
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Produto">
+                                <h3>Sobremesa 1</h3>
+                                <p>R$ 7.50</p>
+                                <div class="quantity-controls">
+                                    <button class="btn-quantity">-</button>
+                                    <input type="text" class="quantity-input" value="0" readonly>
+                                    <button class="btn-quantity">+</button>
+                                </div>
+                                <button class="btn-add">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-container">
+                        <h2 class="carousel-title">Adicionais</h2>
+                        <div class="carousel" id="extras-carousel">
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Produto">
+                                <h3>Adicional 1</h3>
+                                <p>R$ 3.00</p>
+                                <div class="quantity-controls">
+                                    <button class="btn-quantity">-</button>
+                                    <input type="text" class="quantity-input" value="0" readonly>
+                                    <button class="btn-quantity">+</button>
+                                </div>
+                                <button class="btn-add">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="order-commands" class="order-commands">
+                    <h3>Comanda</h3>
+                    <p>Total: R$ 0.00</p>
+                    <div id="order-items"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/js/script.js"></script>
+</body>
+</html>

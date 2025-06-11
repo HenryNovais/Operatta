@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Estoque</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock" class="active"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Estoque</h1>
+                <div class="stock-actions">
+                    <button class="btn btn-primary" id="add-item-btn">Adicionar Item</button>
+                    <button class="btn btn-secondary" id="import-export-btn">Importar/Exportar Dados</button>
+                    <button class="btn btn-secondary" id="stock-view-btn">Visão do Estoque</button>
+                </div>
+            </header>
+            <div class="stock-dashboard">
+                <div class="dashboard-card">
+                    <h3>Estoque por Localização</h3>
+                    <canvas id="location-chart"></canvas>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Visão por Categoria</h3>
+                    <canvas id="category-chart"></canvas>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Estoque Mínimo x Real</h3>
+                    <canvas id="min-vs-real-chart"></canvas>
+                </div>
+            </div>
+            <div class="stock-table-container" id="stock-table-container" style="display: none;">
+                <div class="stock-controls">
+                    <div class="stock-filters">
+                        <input type="text" id="search-input" placeholder="Buscar por nome ou código..." class="stock-search">
+                        <select id="category-filter">
+                            <option value="">Todas as Categorias</option>
+                            <option value="carnes">Carnes</option>
+                            <option value="pães">Pães</option>
+                            <option value="laticínios">Laticínios</option>
+                            <option value="vegetais">Vegetais</option>
+                            <option value="embalagens">Embalagens</option>
+                            <option value="bebidas">Bebidas</option>
+                        </select>
+                        <select id="sort-select">
+                            <option value="name-asc">Nome (A-Z)</option>
+                            <option value="name-desc">Nome (Z-A)</option>
+                            <option value="quantity-asc">Quantidade (Crescente)</option>
+                            <option value="quantity-desc">Quantidade (Decrescente)</option>
+                            <option value="validity-asc">Validade (Mais Próxima)</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="stock-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Código SKU</th>
+                            <th>Unidade</th>
+                            <th>Categoria</th>
+                            <th>Fornecedor</th>
+                            <th>Quant. Estoque</th>
+                            <th>Estoque Mín.</th>
+                            <th>Estoque Máx.</th>
+                            <th>Ponto Pedido</th>
+                            <th>Custo Unit.</th>
+                            <th>Custo Total</th>
+                            <th>Validade</th>
+                            <th>Localização</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-items">
+                    </tbody>
+                </table>
+                <div class="stock-actions-bottom">
+                    <button class="btn btn-primary" id="report-btn">Gerar Relatórios</button>
+                    <button class="btn btn-secondary" id="label-btn">Imprimir Etiquetas</button>
+                    <button class="btn btn-secondary" id="history-btn">Histórico de Movimentação</button>
+                    <button class="btn btn-secondary" id="suppliers-btn">Acesso a Fornecedores</button>
+                    <button class="btn btn-secondary" id="calc-btn">Calculadora de Ponto de Pedido</button>
+                </div>
+            </div>
+            <div id="item-form" class="item-form">
+                <h2 id="form-title">Adicionar Item</h2>
+                <form id="item-form-data">
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="item-name">Nome do Item</label>
+                            <input type="text" id="item-name" required>
+                        </div>
+                        <div>
+                            <label for="item-sku">Código SKU</label>
+                            <input type="text" id="item-sku" required>
+                        </div>
+                    </div>
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="item-unit">Unidade de Medida</label>
+                            <input type="text" id="item-unit" required>
+                        </div>
+                        <div>
+                            <label for="item-category">Categoria</label>
+                            <select id="item-category" required>
+                                <option value="">Selecione</option>
+                                <option value="carnes">Carnes</option>
+                                <option value="pães">Pães</option>
+                                <option value="laticínios">Laticínios</option>
+                                <option value="vegetais">Vegetais</option>
+                                <option value="embalagens">Embalagens</option>
+                                <option value="bebidas">Bebidas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="item-supplier">Fornecedor</label>
+                            <input type="text" id="item-supplier" required>
+                        </div>
+                        <div>
+                            <label for="item-quantity">Quant. Estoque</label>
+                            <input type="number" id="item-quantity" required>
+                        </div>
+                    </div>
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="item-min-stock">Estoque Mínimo</label>
+                            <input type="number" id="item-min-stock" required>
+                        </div>
+                        <div>
+                            <label for="item-max-stock">Estoque Máximo</label>
+                            <input type="number" id="item-max-stock" required>
+                        </div>
+                    </div>
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="item-order-point">Ponto de Pedido</label>
+                            <input type="number" id="item-order-point" required>
+                        </div>
+                        <div>
+                            <label for="item-cost">Custo Unitário</label>
+                            <input type="number" step="0.01" id="item-cost" required>
+                        </div>
+                    </div>
+                    <div class="form-group two-cols">
+                        <div>
+                            <label for="item-validity">Data de Validade</label>
+                            <input type="date" id="item-validity" required>
+                        </div>
+                        <div>
+                            <label for="item-location">Localização</label>
+                            <input type="text" id="item-location" required placeholder="Ex: Loja A - Prateleira 1">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-form">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="/js/script.js"></script>
+</html>

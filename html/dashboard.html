@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard" class="active"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Dashboard</h1>
+            </header>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Últimas Notícias</h3>
+                    <div id="dashboard-alerts" class="chart-placeholder"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Produtos Mais Vendidos</h3>
+                    <div class="chart-placeholder"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Itens Críticos no Estoque</h3>
+                    <div class="chart-placeholder"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Faturamento Mensal</h3>
+                    <div class="chart-placeholder"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Formas de Pagamento</h3>
+                    <div class="chart-placeholder"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Formas de Vendas</h3>
+                    <div class="chart-placeholder"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Pedidos Diários</h3>
+                    <div class="chart-placeholder"></div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Produtos Menos Vendidos</h3>
+                    <div class="chart-placeholder"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/script.js"></script>
+</body>
+</html>

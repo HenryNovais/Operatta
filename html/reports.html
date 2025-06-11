@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Relatórios</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock" class="active"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <h1>Relatórios</h1>
+                <div class="admin-actions">
+                    <button class="btn btn-primary" id="generate-report">Gerar Relatório</button>
+                    <button class="btn btn-secondary" id="export-report">Exportar</button>
+                    <button class="btn btn-secondary" id="print-report">Imprimir</button>
+                    <button class="btn btn-secondary" id="visualize-chart">Visualizar em Gráfico</button>
+                    <button class="btn btn-secondary" id="share-report">Compartilhar</button>
+                    <button class="btn btn-secondary" id="schedule-report">Agendar</button>
+                    <button class="btn btn-secondary" id="clear-filters">Limpar Filtros</button>
+                </div>
+            </div>
+            <div class="report-filters">
+                <div class="form-group">
+                    <label for="report-type">Tipo de Relatório</label>
+                    <select id="report-type">
+                        <option value="">Selecione o tipo</option>
+                        <option value="sales-period">Vendas por Período</option>
+                        <option value="sales-product">Vendas por Produto</option>
+                        <option value="sales-category">Vendas por Categoria</option>
+                        <option value="sales-payment">Vendas por Forma de Pagamento</option>
+                        <option value="sales-channel">Vendas por Canal</option>
+                        <option value="sales-ticket">Ticket Médio</option>
+                        <option value="sales-peak">Horários de Pico</option>
+                        <option value="sales-attendant">Vendas por Atendente</option>
+                        <option value="sales-discounts">Descontos Concedidos</option>
+                        <option value="finance-revenue">Receitas e Despesas</option>
+                        <option value="finance-cashflow">Fluxo de Caixa</option>
+                        <option value="finance-profit">Lucratividade</option>
+                        <option value="finance-costs">Custos por Produto</option>
+                        <option value="finance-taxes">Impostos</option>
+                        <option value="stock-current">Estoque Atual</option>
+                        <option value="stock-movement">Movimentação de Estoque</option>
+                        <option value="stock-low">Produtos com Baixo Estoque</option>
+                        <option value="stock-losses">Perdas de Estoque</option>
+                        <option value="stock-turnover">Giro de Estoque</option>
+                        <option value="stock-cost">Custo do Estoque</option>
+                        <option value="clients-list">Cadastro de Clientes</option>
+                        <option value="clients-frequency">Frequência de Compras</option>
+                        <option value="clients-spending">Gastos por Cliente</option>
+                        <option value="marketing-campaigns">Eficácia de Campanhas</option>
+                        <option value="marketing-coupons">Cupons Utilizados</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date-filter">Período</label>
+                    <select id="date-filter">
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Última Semana</option>
+                        <option value="month">Último Mês</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="form-group" id="custom-date" style="display: none;">
+                    <label for="custom-start-date">Data Início</label>
+                    <input type="date" id="custom-start-date">
+                    <label for="custom-end-date">Data Fim</label>
+                    <input type="date" id="custom-end-date">
+                </div>
+                <div class="form-group">
+                    <label for="product-filter">Produto</label>
+                    <select id="product-filter">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category-filter">Categoria</label>
+                    <select id="category-filter">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="payment-filter">Forma de Pagamento</label>
+                    <select id="payment-filter">
+                        <option value="">Todas</option>
+                        <option value="credit">Crédito</option>
+                        <option value="debit">Débito</option>
+                        <option value="cash">Dinheiro</option>
+                        <option value="pix">Pix</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="channel-filter">Canal de Venda</label>
+                    <select id="channel-filter">
+                        <option value="">Todos</option>
+                        <option value="counter">Balcão</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="app">Aplicativo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="report-output" id="report-output">
+                <div class="dashboard-card">
+                    <h3>Relatório Gerado</h3>
+                    <div id="report-content">
+                        <p>Selecione um tipo de relatório e aplique os filtros para visualizar os dados.</p>
+                    </div>
+                    <canvas id="report-chart" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/script.js"></script>
+</body>
+</html>

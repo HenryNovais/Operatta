@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Produtos</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../imgs/logo-recolhida.png" alt="Logomarca Operatta Recolhida" class="logo-image-collapsed">
+                <img src="../imgs/logo-expandida.png" alt="Logomarca Operatta Expandida" class="logo-image-expanded">
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
+                    <li data-section="orders" class="active"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="stock"><i class="fas fa-box"></i><span>Estoque</span></li>
+                    <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
+                    <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
+                    <li data-section="admin"><i class="fas fa-users-cog"></i><span>Administradores</span></li>
+                    <li data-section="system"><i class="fas fa-cogs"></i><span>Sistema</span></li>
+                    <li data-section="logout"><i class="fas fa-sign-out-alt"></i><span>Sair</span></li>
+                </ul>
+            </nav>
+        </aside>
+        <div class="main-content">
+            <div class="header">
+                <h1>Produtos</h1>
+                <div class="admin-actions">
+                    <button class="btn btn-primary" id="add-product-btn"><i class="fas fa-plus"></i> Adicionar Produto</button>
+                    <button class="btn btn-secondary" id="manage-categories-btn"><i class="fas fa-tags"></i> Gerenciar Categorias</button>
+                    <button class="btn btn-secondary" id="import-export-btn"><i class="fas fa-file-import"></i> Importar/Exportar</button>
+                </div>
+            </div>
+            <div class="products-controls">
+                <div class="form-group">
+                    <input type="text" id="search-input" placeholder="Buscar por nome ou SKU...">
+                </div>
+                <div class="form-group">
+                    <select id="category-filter">
+                        <option value="">Todas as Categorias</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select id="availability-filter">
+                        <option value="">Todas as Disponibilidades</option>
+                        <option value="available">Disponível</option>
+                        <option value="unavailable">Indisponível</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select id="sort-select">
+                        <option value="">Ordenar por...</option>
+                        <option value="name-asc">Nome (A-Z)</option>
+                        <option value="name-desc">Nome (Z-A)</option>
+                        <option value="price-asc">Preço (Menor-Maior)</option>
+                        <option value="price-desc">Preço (Maior-Menor)</option>
+                        <option value="category-asc">Categoria (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="products-container">
+                <div class="products-list">
+                    <div id="products-grid" class="products-grid">
+                        <!-- Produtos serão carregados via JavaScript -->
+                    </div>
+                </div>
+                <div class="product-details" id="product-details">
+                    <div class="dashboard-card">
+                        <h3>Detalhes do Produto</h3>
+                        <p>Selecione um produto para visualizar os detalhes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para adicionar/editar produto -->
+    <div class="modal" id="product-modal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="modal-title">Adicionar Produto</h2>
+            <form id="product-form">
+                <div class="form-group">
+                    <label for="product-image">Imagem do Produto</label>
+                    <input type="file" id="product-image" accept="image/*">
+                    <img id="image-preview" src="" alt="Prévia da Imagem" style="display: none; max-width: 100px; margin-top: 10px;">
+                </div>
+                <div class="form-group">
+                    <label for="product-name">Nome do Produto</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Descrição</label>
+                    <textarea id="product-description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Preço de Venda (R$)</label>
+                    <input type="number" id="product-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-cost">Custo de Produção (R$)</label>
+                    <input type="number" id="product-cost" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Categoria</label>
+                    <select id="product-category" required>
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-sku">Código SKU</label>
+                    <input type="text" id="product-sku">
+                </div>
+                <div class="form-group">
+                    <label for="product-availability">Disponibilidade</label>
+                    <select id="product-availability" required>
+                        <option value="available">Disponível</option>
+                        <option value="unavailable">Indisponível</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ingredientes</label>
+                    <div id="ingredients-list">
+                        <div class="ingredient-item">
+                            <select class="ingredient-select"></select>
+                            <input type="number" class="ingredient-quantity" placeholder="Quantidade" step="0.01">
+                            <select class="ingredient-unit">
+                                <option value="g">Gramas (g)</option>
+                                <option value="ml">Mililitros (ml)</option>
+                                <option value="un">Unidades (un)</option>
+                            </select>
+                            <button type="button" class="btn btn-secondary remove-ingredient"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="add-ingredient-btn"><i class="fas fa-plus"></i> Adicionar Ingrediente</button>
+                </div>
+                <div class="form-group">
+                    <label>Opções de Personalização</label>
+                    <div id="customizations-list">
+                        <div class="customization-item">
+                            <input type="text" class="customization-name" placeholder="Nome da Opção">
+                            <input type="number" class="customization-price" placeholder="Preço (R$)" step="0.01">
+                            <button type="button" class="btn btn-secondary remove-customization"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="add-customization-btn"><i class="fas fa-plus"></i> Adicionar Opção</button>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Modal para gerenciar categorias -->
+    <div class="modal" id="categories-modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Gerenciar Categorias</h2>
+            <div id="categories-list"></div>
+            <div class="form-group">
+                <input type="text" id="new-category" placeholder="Nova Categoria">
+                <button class="btn btn-primary" id="add-category-btn">Adicionar</button>
+            </div>
+            <button class="btn btn-secondary" id="close-categories-modal">Fechar</button>
+        </div>
+    </div>
+    <script src="/js/script.js"></script>
+</body>
+</html>

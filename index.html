@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatta - Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <img src="/imgs/Logomarca-login.png" alt="Logomarca Operatta" id="logo-image" class="logo-image">
+        <div id="login-box" class="login-box">
+            <h2>Entrar</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-matricula">Matricula</label>
+                    <input type="text" id="login-matricula" name="login-matricula" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" name="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</html>
