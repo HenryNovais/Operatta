@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Montserrat';
     background-color: #F5F0E6;
     height: 100vh;
     overflow: hidden;
@@ -757,7 +757,25 @@ body.dark-mode .stock-search {
 }
 
 .stock-table-container {
-    overflow-x: auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: none;
+}
+
+body.dark-mode .stock-table-container {
+    background-color: #2D2D30;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .stock-table {
@@ -1171,6 +1189,12 @@ body.dark-mode .report-output {
         flex-direction: column;
     }
 
+    .stock-table-container {
+        width: 95%;
+        max-width: 95%;
+        max-height: 85vh;
+    }
+
     .stock-dashboard,
     .finance-dashboard,
     .admin-dashboard,
@@ -1221,7 +1245,7 @@ body.dark-mode .report-output {
         color: #4E6D7D;
     }
 
-    .finance-table td[data-label="Ações"] {
+    .finance-table td[data-label="AÃƒÂ§ÃƒÂµes"] {
         justify-content: flex-end;
         position: absolute;
         right: 10px;
@@ -1263,7 +1287,7 @@ body.dark-mode .report-output {
     background-color: #2c3e50;
 }
 
-/* Estilos para a seção de filtros de relatórios */
+/* Estilos para a seÃƒÂ§ÃƒÂ£o de filtros de relatÃƒÂ³rios */
 .report-filters {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1298,7 +1322,7 @@ body.dark-mode .report-output {
     border-color: #3498db;
 }
 
-/* Estilos para a saída do relatório */
+/* Estilos para a saÃƒÂ­da do relatÃƒÂ³rio */
 .report-output {
     margin-top: 20px;
 }
@@ -1308,7 +1332,7 @@ body.dark-mode .report-output {
     height: auto;
 }
 
-/* Estilos para a tabela de finanças */
+/* Estilos para a tabela de finanÃƒÂ§as */
 .finance-table {
     width: 100%;
     border-collapse: collapse;
