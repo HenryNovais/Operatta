@@ -52,7 +52,7 @@
                     <canvas id="min-vs-real-chart"></canvas>
                 </div>
             </div>
-            <div class="stock-table-container" id="stock-table-container" style="display: none;">
+            <div class="stock-table-container" id="stock-table-container">
                 <div class="stock-controls">
                     <div class="stock-filters">
                         <input type="text" id="search-input" placeholder="Buscar por nome ou código..." class="stock-search">
@@ -72,6 +72,13 @@
                             <option value="quantity-desc">Quantidade (Decrescente)</option>
                             <option value="validity-asc">Validade (Mais Próxima)</option>
                         </select>
+                    </div>
+                    <div class="stock-actions-bottom">
+                        <button class="btn btn-primary" id="report-btn">Gerar Relatórios</button>
+                        <button class="btn btn-secondary" id="label-btn">Imprimir Etiquetas</button>
+                        <button class="btn btn-secondary" id="history-btn">Histórico de Movimentação</button>
+                        <button class="btn btn-secondary" id="suppliers-btn">Acesso a Fornecedores</button>
+                        <button class="btn btn-secondary" id="calc-btn">Calculadora de Ponto de Pedido</button>
                     </div>
                 </div>
                 <table class="stock-table">
@@ -96,13 +103,6 @@
                     <tbody id="stock-items">
                     </tbody>
                 </table>
-                <div class="stock-actions-bottom">
-                    <button class="btn btn-primary" id="report-btn">Gerar Relatórios</button>
-                    <button class="btn btn-secondary" id="label-btn">Imprimir Etiquetas</button>
-                    <button class="btn btn-secondary" id="history-btn">Histórico de Movimentação</button>
-                    <button class="btn btn-secondary" id="suppliers-btn">Acesso a Fornecedores</button>
-                    <button class="btn btn-secondary" id="calc-btn">Calculadora de Ponto de Pedido</button>
-                </div>
             </div>
             <div id="item-form" class="item-form">
                 <h2 id="form-title">Adicionar Item</h2>

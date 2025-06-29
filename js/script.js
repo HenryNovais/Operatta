@@ -1100,30 +1100,30 @@ document.addEventListener('DOMContentLoaded', () => {
         audio.play().catch(error => console.log('Erro ao reproduzir áudio:', error));
     }
 
-    // Lógica para tela de Produtos
     const addProductBtn = document.getElementById('add-product-btn');
-    const productModal = document.getElementById('product-modal');
-    const productFormData = document.getElementById('product-form-data');
-    const cancelProductBtn = document.getElementById('cancel-product-btn');
-    let productIdCounter = parseInt(localStorage.getItem('productIdCounter') || '0');
-    let products = JSON.parse(localStorage.getItem('products') || '[]');
+const productForm = document.getElementById('product-form');
+let productIdCounter = parseInt(localStorage.getItem('productIdCounter') || '0');
+let products = JSON.parse(localStorage.getItem('products') || '[]');
 
-    if (addProductBtn && productModal) {
-        addProductBtn.addEventListener('click', () => {
-            productModal.style.display = 'flex';
-            productFormData.reset();
+if (addProductBtn && productForm) {
+    addProductBtn.addEventListener('click', () => {
+        productForm.style.display = 'block';
+        const formData = productForm.querySelector('#product-form-data');
+        if (formData) {
+            formData.reset();
             document.getElementById('product-sku').value = '';
             document.getElementById('product-cost').value = '0.00';
             document.getElementById('availability-status').textContent = 'Verificando...';
-            document.getElementById('ingredients-list').innerHTML = '';
-            document.getElementById('product-image').value = '';
-        });
+        }
+    });
 
+    const productFormData = document.getElementById('product-form-data');
+    if (productFormData) {
         productFormData.addEventListener('submit', (e) => {
             e.preventDefault();
             const category = document.getElementById('product-category').value;
             if (!category) {
-                alert('Por favor, selecione uma categoria!');
+                alert('Selecione uma categoria!');
                 return;
             }
             productIdCounter++;
@@ -1134,10 +1134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const description = document.getElementById('product-description').value;
             const salePrice = parseFloat(document.getElementById('product-sale-price').value) || 0.00;
             let cost = parseFloat(document.getElementById('product-cost').value) || 0.00;
-            const imageInput = document.getElementById('product-image');
-            const imageFile = imageInput.files[0];
 
-            // Coletar insumos
             const ingredients = [];
             document.querySelectorAll('#ingredients-list .ingredient-row').forEach(row => {
                 const name = row.querySelector('.ingredient-name').value;
@@ -1146,7 +1143,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (name && quantity > 0) ingredients.push({ name, quantity, unit });
             });
 
-            // Calcular custo com base no estoque
             let totalCost = 0;
             const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
             ingredients.forEach(ingredient => {
@@ -1157,7 +1153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             document.getElementById('product-cost').value = totalCost.toFixed(2);
 
-            // Verificar disponibilidade
             let isAvailable = true;
             ingredients.forEach(ingredient => {
                 const stockItem = stockData.find(item => item.name.toLowerCase() === ingredient.name.toLowerCase());
@@ -1166,7 +1161,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             document.getElementById('availability-status').textContent = isAvailable ? 'Disponível' : 'Indisponível';
-            document.getElementById('availability-status').className = isAvailable ? '' : 'unavailable';
 
             const newProduct = {
                 id: productIdCounter,
@@ -1177,181 +1171,180 @@ document.addEventListener('DOMContentLoaded', () => {
                 cost: totalCost,
                 category: category,
                 ingredients: ingredients,
-                availability: isAvailable,
-                image: imageFile ? imageFile.name : null
+                availability: isAvailable
             };
 
             products.push(newProduct);
             localStorage.setItem('products', JSON.stringify(products));
-            productModal.style.display = 'none';
+            productForm.style.display = 'none';
             loadProductTable();
         });
-
-        document.getElementById('add-ingredient-btn')?.addEventListener('click', () => {
-            const ingredientsList = document.getElementById('ingredients-list');
-            if (ingredientsList) {
-                const row = document.createElement('div');
-                row.className = 'ingredient-row';
-                row.innerHTML = `
-                    <input type="text" class="ingredient-name" placeholder="Nome do insumo">
-                    <input type="number" class="ingredient-quantity" placeholder="Quantidade" min="0" step="0.01">
-                    <select class="ingredient-unit">
-                        <option value="g">Gramas (g)</option>
-                        <option value="ml">Mililitros (ml)</option>
-                        <option value="un">Unidades (un)</option>
-                    </select>
-                    <button type="button" class="btn btn-small remove-ingredient-btn">Remover</button>
-                `;
-                ingredientsList.appendChild(row);
-                row.querySelector('.remove-ingredient-btn').addEventListener('click', () => {
-                    row.remove();
-                    updateProductCost();
-                });
-            }
-        });
-
-        document.getElementById('add-option-btn').addEventListener('click', () => {
-            const optionsList = document.getElementById('options-list');
-            if (optionsList) {
-                const row = document.createElement('div');
-                row.className = 'option-row';
-                row.innerHTML = `
-                    <input type="text" class="option-name" placeholder="Nome da opção">
-                    <input type="text" class="option-value" placeholder="Valor da opção">
-                    <button type="button" class="btn btn-small remove-option-btn">Remover</button>
-                `;
-                optionsList.appendChild(row);
-                row.querySelector('.remove-option-btn').addEventListener('click', () => {
-                    row.remove();
-                });
-            }
-        });
-
-        cancelProductBtn.addEventListener('click', () => {
-            productModal.style.display = 'none';
-        });
-
-        function updateProductCost() {
-            const ingredients = document.querySelectorAll('#ingredients-list .ingredient-row');
-            let totalCost = 0;
-            const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
-            ingredients.forEach(row => {
-                const name = row.querySelector('.ingredient-name').value;
-                const quantity = parseFloat(row.querySelector('.ingredient-quantity').value) || 0;
-                const unit = row.querySelector('.ingredient-unit').value;
-                const stockItem = stockData.find(item => item.name.toLowerCase() === name.toLowerCase());
-                if (stockItem) {
-                    totalCost += (stockItem.cost * quantity) / (stockItem.unit === 'un' ? 1 : stockItem.unit === 'g' ? 1000 : 1000);
-                }
-            });
-            document.getElementById('product-cost').value = totalCost.toFixed(2);
-            checkAvailability();
-        }
-
-        function checkAvailability() {
-            const ingredients = document.querySelectorAll('#ingredients-list .ingredient-row');
-            let isAvailable = true;
-            const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
-            ingredients.forEach(row => {
-                const name = row.querySelector('.ingredient-name').value;
-                const quantity = parseFloat(row.querySelector('.ingredient-quantity').value) || 0;
-                const stockItem = stockData.find(item => item.name.toLowerCase() === name.toLowerCase());
-                if (stockItem && stockItem.quantity < quantity) {
-                    isAvailable = false;
-                }
-            });
-            document.getElementById('availability-status').textContent = isAvailable ? 'Disponível' : 'Indisponível';
-            document.getElementById('availability-status').className = isAvailable ? '' : 'unavailable';
-        }
-
-        document.querySelectorAll('#ingredients-list .ingredient-row input').forEach(input => {
-            input.addEventListener('input', updateProductCost);
-        });
-
-        function loadProductTable() {
-            const productTable = document.getElementById('product-table');
-            if (productTable) {
-                productTable.querySelector('tbody').innerHTML = '';
-                products.forEach(product => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${product.name}</td>
-                        <td>${product.sku}</td>
-                        <td>R$ ${product.salePrice.toFixed(2)}</td>
-                        <td>R$ ${product.cost.toFixed(2)}</td>
-                        <td>${product.category}</td>
-                        <td>${product.availability ? 'Disponível' : 'Indisponível'}</td>
-                        <td><select class="btn-select"><option value="">Ações</option><option value="edit">Editar</option><option value="remove">Remover</option></select></td>
-                    `;
-                    productTable.appendChild(row);
-
-                    row.querySelector('.btn-select').addEventListener('change', (e) => {
-                        const action = e.target.value;
-                        const index = Array.from(productTable.querySelector('tbody').children).indexOf(row);
-                        if (action === 'edit') {
-                            productModal.style.display = 'flex';
-                            const product = products[index];
-                            document.getElementById('product-name').value = product.name;
-                            document.getElementById('product-description').value = product.description;
-                            document.getElementById('product-sale-price').value = product.salePrice;
-                            document.getElementById('product-cost').value = product.cost;
-                            document.getElementById('product-category').value = product.category;
-                            document.getElementById('product-sku').value = product.sku;
-                            document.getElementById('availability-status').textContent = product.availability ? 'Disponível' : 'Indisponível';
-                            document.getElementById('ingredients-list').innerHTML = '';
-                            product.ingredients.forEach(ingredient => {
-                                const row = document.createElement('div');
-                                row.className = 'ingredient-row';
-                                row.innerHTML = `
-                                    <input type="text" class="ingredient-name" value="${ingredient.name}" placeholder="Nome do insumo">
-                                    <input type="number" class="ingredient-quantity" value="${ingredient.quantity}" placeholder="Quantidade" min="0" step="0.01">
-                                    <select class="ingredient-unit">
-                                        <option value="g" ${ingredient.unit === 'g' ? 'selected' : ''}>Gramas (g)</option>
-                                        <option value="ml" ${ingredient.unit === 'ml' ? 'selected' : ''}>Mililitros (ml)</option>
-                                        <option value="un" ${ingredient.unit === 'un' ? 'selected' : ''}>Unidades (un)</option>
-                                    </select>
-                                    <button type="button" class="btn btn-small remove-ingredient-btn">Remover</button>
-                                `;
-                                document.getElementById('ingredients-list').appendChild(row);
-                                row.querySelector('.remove-ingredient-btn').addEventListener('click', () => {
-                                    row.remove();
-                                    updateProductCost();
-                                });
-                            });
-                            productFormData.onsubmit = (e) => {
-                                e.preventDefault();
-                                products[index] = {
-                                    id: product.id,
-                                    sku: document.getElementById('product-sku').value,
-                                    name: document.getElementById('product-name').value,
-                                    description: document.getElementById('product-description').value,
-                                    salePrice: parseFloat(document.getElementById('product-sale-price').value) || 0.00,
-                                    cost: parseFloat(document.getElementById('product-cost').value) || 0.00,
-                                    category: document.getElementById('product-category').value,
-                                    ingredients: Array.from(document.querySelectorAll('#ingredients-list .ingredient-row')).map(row => ({
-                                        name: row.querySelector('.ingredient-name').value,
-                                        quantity: parseFloat(row.querySelector('.ingredient-quantity').value) || 0,
-                                        unit: row.querySelector('.ingredient-unit').value
-                                    })),
-                                    availability: document.getElementById('availability-status').textContent === 'Disponível',
-                                    image: document.getElementById('product-image').files[0] ? document.getElementById('product-image').files[0].name : product.image
-                                };
-                                localStorage.setItem('products', JSON.stringify(products));
-                                productModal.style.display = 'none';
-                                loadProductTable();
-                            };
-                        } else if (action === 'remove') {
-                            if (confirm('Tem certeza que deseja remover este produto?')) {
-                                products.splice(index, 1);
-                                localStorage.setItem('products', JSON.stringify(products));
-                                loadProductTable();
-                            }
-                        }
-                        e.target.value = '';
-                    });
-                });
-            }
-        }
-        loadProductTable();
     }
+
+    document.getElementById('add-ingredient-btn')?.addEventListener('click', () => {
+        const ingredientsList = document.getElementById('ingredients-list');
+        if (ingredientsList) {
+            const row = document.createElement('div');
+            row.className = 'ingredient-row';
+            row.innerHTML = `
+                <input type="text" class="ingredient-name" placeholder="Nome do insumo">
+                <input type="number" class="ingredient-quantity" placeholder="Quantidade" min="0" step="0.01">
+                <select class="ingredient-unit">
+                    <option value="g">Gramas (g)</option>
+                    <option value="ml">Mililitros (ml)</option>
+                    <option value="un">Unidades (un)</option>
+                </select>
+                <button type="button" class="remove-ingredient-btn">Remover</button>
+            `;
+            ingredientsList.appendChild(row);
+            row.querySelector('.remove-ingredient-btn').addEventListener('click', () => {
+                row.remove();
+                updateProductCost();
+            });
+        }
+    });
+
+    document.getElementById('add-option-btn')?.addEventListener('click', () => {
+        const optionsList = document.getElementById('options-list');
+        if (optionsList) {
+            const row = document.createElement('div');
+            row.className = 'option-row';
+            row.innerHTML = `
+                <input type="text" class="option-name" placeholder="Nome da opção">
+                <input type="text" class="option-value" placeholder="Valor da opção">
+                <button type="button" class="remove-option-btn">Remover</button>
+            `;
+            optionsList.appendChild(row);
+            row.querySelector('.remove-option-btn').addEventListener('click', () => {
+                row.remove();
+            });
+        }
+    });
+
+    document.getElementById('cancel-product-btn')?.addEventListener('click', () => {
+        const productForm = document.getElementById('product-form');
+        if (productForm) productForm.style.display = 'none';
+    });
+
+    function updateProductCost() {
+        const ingredients = document.querySelectorAll('#ingredients-list .ingredient-row');
+        let totalCost = 0;
+        const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
+        ingredients.forEach(row => {
+            const name = row.querySelector('.ingredient-name').value;
+            const quantity = parseFloat(row.querySelector('.ingredient-quantity').value) || 0;
+            const unit = row.querySelector('.ingredient-unit').value;
+            const stockItem = stockData.find(item => item.name.toLowerCase() === name.toLowerCase());
+            if (stockItem) {
+                totalCost += (stockItem.cost * quantity) / (stockItem.unit === 'un' ? 1 : stockItem.unit === 'g' ? 1000 : 1000);
+            }
+        });
+        document.getElementById('product-cost').value = totalCost.toFixed(2);
+        checkAvailability();
+    }
+
+    function checkAvailability() {
+        const ingredients = document.querySelectorAll('#ingredients-list .ingredient-row');
+        let isAvailable = true;
+        const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
+        ingredients.forEach(row => {
+            const name = row.querySelector('.ingredient-name').value;
+            const quantity = parseFloat(row.querySelector('.ingredient-quantity').value) || 0;
+            const stockItem = stockData.find(item => item.name.toLowerCase() === name.toLowerCase());
+            if (stockItem && stockItem.quantity < quantity) {
+                isAvailable = false;
+            }
+        });
+        document.getElementById('availability-status').textContent = isAvailable ? 'Disponível' : 'Indisponível';
+    }
+
+    document.querySelectorAll('#ingredients-list .ingredient-row input')?.forEach(input => {
+        input.addEventListener('input', updateProductCost);
+    });
+
+    function loadProductTable() {
+        const productTable = document.getElementById('product-table');
+        if (productTable) {
+            productTable.innerHTML = '';
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.sku}</td>
+                    <td>R$ ${product.salePrice.toFixed(2)}</td>
+                    <td>R$ ${product.cost.toFixed(2)}</td>
+                    <td>${product.category}</td>
+                    <td>${product.availability ? 'Disponível' : 'Indisponível'}</td>
+                    <td><select class="btn-select"><option value="">Ações</option><option value="edit">Editar</option><option value="remove">Remover</option></select></td>
+                `;
+                productTable.appendChild(row);
+
+                row.querySelector('.btn-select').addEventListener('change', (e) => {
+                    const action = e.target.value;
+                    const index = Array.from(productTable.children).indexOf(row);
+                    if (action === 'edit') {
+                        productForm.style.display = 'block';
+                        const product = products[index];
+                        document.getElementById('product-name').value = product.name;
+                        document.getElementById('product-description').value = product.description;
+                        document.getElementById('product-sale-price').value = product.salePrice;
+                        document.getElementById('product-cost').value = product.cost;
+                        document.getElementById('product-category').value = product.category;
+                        document.getElementById('product-sku').value = product.sku;
+                        document.getElementById('availability-status').textContent = product.availability ? 'Disponível' : 'Indisponível';
+                        document.getElementById('ingredients-list').innerHTML = '';
+                        product.ingredients.forEach(ingredient => {
+                            const row = document.createElement('div');
+                            row.className = 'ingredient-row';
+                            row.innerHTML = `
+                                <input type="text" class="ingredient-name" value="${ingredient.name}" placeholder="Nome do insumo">
+                                <input type="number" class="ingredient-quantity" value="${ingredient.quantity}" placeholder="Quantidade" min="0" step="0.01">
+                                <select class="ingredient-unit">
+                                    <option value="g" ${ingredient.unit === 'g' ? 'selected' : ''}>Gramas (g)</option>
+                                    <option value="ml" ${ingredient.unit === 'ml' ? 'selected' : ''}>Mililitros (ml)</option>
+                                    <option value="un" ${ingredient.unit === 'un' ? 'selected' : ''}>Unidades (un)</option>
+                                </select>
+                                <button type="button" class="remove-ingredient-btn">Remover</button>
+                            `;
+                            document.getElementById('ingredients-list').appendChild(row);
+                            row.querySelector('.remove-ingredient-btn').addEventListener('click', () => {
+                                row.remove();
+                                updateProductCost();
+                            });
+                        });
+                        document.getElementById('product-form-data').onsubmit = (e) => {
+                            e.preventDefault();
+                            products[index] = {
+                                id: product.id,
+                                sku: document.getElementById('product-sku').value,
+                                name: document.getElementById('product-name').value,
+                                description: document.getElementById('product-description').value,
+                                salePrice: parseFloat(document.getElementById('product-sale-price').value) || 0.00,
+                                cost: parseFloat(document.getElementById('product-cost').value) || 0.00,
+                                category: document.getElementById('product-category').value,
+                                ingredients: Array.from(document.querySelectorAll('#ingredients-list .ingredient-row')).map(row => ({
+                                    name: row.querySelector('.ingredient-name').value,
+                                    quantity: parseFloat(row.querySelector('.ingredient-quantity').value) || 0,
+                                    unit: row.querySelector('.ingredient-unit').value
+                                })),
+                                availability: document.getElementById('availability-status').textContent === 'Disponível'
+                            };
+                            localStorage.setItem('products', JSON.stringify(products));
+                            productForm.style.display = 'none';
+                            loadProductTable();
+                        };
+                    } else if (action === 'remove') {
+                        if (confirm('Tem certeza que deseja remover este produto?')) {
+                            products.splice(index, 1);
+                            localStorage.setItem('products', JSON.stringify(products));
+                            loadProductTable();
+                        }
+                    }
+                    e.target.value = '';
+                });
+            });
+        }
+    }
+    loadProductTable();
+}
 });
