@@ -1454,3 +1454,15 @@ body.dark-mode .report-output {
     padding: 10px;
     border-bottom: 1px solid #ddd;
 }
+
+.conclude-btn.completed {
+    background-color: #28a745;
+    color: white;
+    cursor: not-allowed;
+}
+.time.green { color: #28a745; }
+.time.orange { color: #ffc107; }
+.time.red { color: #dc3545; }
+
+#availability-status { font-weight: bold; color: #28a745; }
+#availability-status.unavailable { color: #dc3545; }    

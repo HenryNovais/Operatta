@@ -18,8 +18,8 @@
             <nav>
                 <ul class="nav-links">
                     <li data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></li>
-                    <li data-section="orders" class="active"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
-                    <li data-section="products"><i class="fas fa-utensils"></i><span>Produtos</span></li>
+                    <li data-section="orders"><i class="fas fa-clipboard-list"></i><span>Pedidos</span></li>
+                    <li data-section="products" class="active"><i class="fas fa-utensils"></i><span>Produtos</span></li>
                     <li data-section="stock"><i class="fas fa-box"></i><span>Estoque</span></li>
                     <li data-section="finance"><i class="fas fa-chart-line"></i><span>Financeiro</span></li>
                     <li data-section="reports"><i class="fas fa-file-alt"></i><span>Relatórios</span></li>
@@ -81,82 +81,60 @@
         </div>
     </div>
     <!-- Modal para adicionar/editar produto -->
-    <div class="modal" id="product-modal" style="display: none;">
-        <div class="modal-content">
-            <h2 id="modal-title">Adicionar Produto</h2>
-            <form id="product-form">
+   <div id="product-form" style="display: none;">
+            <h3 id="form-title">Adicionar Produto</h3>
+            <form id="product-form-data">
                 <div class="form-group">
-                    <label for="product-image">Imagem do Produto</label>
+                    <label for="product-image">Imagem:</label>
                     <input type="file" id="product-image" accept="image/*">
-                    <img id="image-preview" src="" alt="Prévia da Imagem" style="display: none; max-width: 100px; margin-top: 10px;">
                 </div>
                 <div class="form-group">
-                    <label for="product-name">Nome do Produto</label>
+                    <label for="product-name">Nome:</label>
                     <input type="text" id="product-name" required>
                 </div>
                 <div class="form-group">
-                    <label for="product-description">Descrição</label>
-                    <textarea id="product-description" rows="4"></textarea>
+                    <label for="product-description">Descrição:</label>
+                    <textarea id="product-description"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="product-price">Preço de Venda (R$)</label>
-                    <input type="number" id="product-price" step="0.01" required>
+                    <label for="product-sale-price">Preço de Venda:</label>
+                    <input type="number" id="product-sale-price" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label for="product-cost">Custo de Produção (R$)</label>
-                    <input type="number" id="product-cost" step="0.01">
+                    <label for="product-cost">Custo:</label>
+                    <input type="number" id="product-cost" step="0.01" value="0.00" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="product-category">Categoria</label>
+                    <label for="product-category">Categoria:</label>
                     <select id="product-category" required>
                         <option value="">Selecione uma categoria</option>
+                        <option value="bebida">Bebida</option>
+                        <option value="comida">Comida</option>
+                        <option value="sobremesa">Sobremesa</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="product-sku">Código SKU</label>
-                    <input type="text" id="product-sku">
+                    <label for="product-sku">SKU:</label>
+                    <input type="text" id="product-sku" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="product-availability">Disponibilidade</label>
-                    <select id="product-availability" required>
-                        <option value="available">Disponível</option>
-                        <option value="unavailable">Indisponível</option>
-                    </select>
+                    <label>Disponibilidade:</label>
+                    <span id="availability-status">Verificando...</span>
                 </div>
                 <div class="form-group">
-                    <label>Ingredientes</label>
-                    <div id="ingredients-list">
-                        <div class="ingredient-item">
-                            <select class="ingredient-select"></select>
-                            <input type="number" class="ingredient-quantity" placeholder="Quantidade" step="0.01">
-                            <select class="ingredient-unit">
-                                <option value="g">Gramas (g)</option>
-                                <option value="ml">Mililitros (ml)</option>
-                                <option value="un">Unidades (un)</option>
-                            </select>
-                            <button type="button" class="btn btn-secondary remove-ingredient"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-secondary" id="add-ingredient-btn"><i class="fas fa-plus"></i> Adicionar Ingrediente</button>
+                    <label>Insumos:</label>
+                    <div id="ingredients-list"></div>
+                    <button type="button" id="add-ingredient-btn">Adicionar Insumo</button>
                 </div>
                 <div class="form-group">
-                    <label>Opções de Personalização</label>
-                    <div id="customizations-list">
-                        <div class="customization-item">
-                            <input type="text" class="customization-name" placeholder="Nome da Opção">
-                            <input type="number" class="customization-price" placeholder="Preço (R$)" step="0.01">
-                            <button type="button" class="btn btn-secondary remove-customization"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-secondary" id="add-customization-btn"><i class="fas fa-plus"></i> Adicionar Opção</button>
+                    <label>Opções:</label>
+                    <div id="options-list"></div>
+                    <button type="button" id="add-option-btn">Adicionar Opção</button>
                 </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                    <button type="button" class="btn btn-secondary" id="cancel-modal">Cancelar</button>
-                </div>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <button type="button" id="cancel-product-btn" class="btn btn-secondary">Cancelar</button>
             </form>
         </div>
-    </div>
     <!-- Modal para gerenciar categorias -->
     <div class="modal" id="categories-modal" style="display: none;">
         <div class="modal-content">

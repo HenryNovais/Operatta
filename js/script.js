@@ -88,32 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-     // Submenu hover logic
-        const submenu = link.querySelector('.submenu');
-        if (submenu) {
-            link.addEventListener('mouseenter', () => {
-                submenu.style.display = 'block';
-            });
-            link.addEventListener('mouseleave', () => {
-                submenu.style.display = 'none';
-            });
-            submenu.querySelectorAll('li').forEach(subLink => {
-                subLink.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const reportType = subLink.dataset.report;
-                    const reportSelect = document.getElementById('report-type');
-                    if (reportType === 'sales') reportSelect.value = 'sales-period';
-                    else if (reportType === 'finance') reportSelect.value = 'finance-revenue';
-                    else if (reportType === 'stock') reportSelect.value = 'stock-current';
-                    else if (reportType === 'clients') reportSelect.value = 'clients-list';
-                    else if (reportType === 'marketing') reportSelect.value = 'marketing-campaigns';
-                    generateReport();
-                });
-            });
-        }
-    });
-
-    
     // Lógica para Administração
     const addUserBtn = document.getElementById('add-user-btn');
     const userForm = document.getElementById('user-form');
@@ -201,12 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     saveBtn?.addEventListener('click', () => {
-        // Lógica para salvar configurações
         alert('Alterações salvas!');
     });
 
     cancelBtn?.addEventListener('click', () => {
-        // Lógica para descartar alterações
         alert('Alterações descartadas!');
     });
 
@@ -232,8 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.createElement('a'); link.setAttribute('href', dataStr); link.setAttribute('download', 'relatorio.xlsm'); link.click();
     });
 
-
-    
     // Lógica para tela de Pedidos
     const newOrderBtn = document.getElementById('new-order-btn');
     const orderSection = document.getElementById('new-order-section');
@@ -241,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const realTimeBtn = document.getElementById('real-time-btn');
     let orderIdCounter = parseInt(localStorage.getItem('orderIdCounter') || '0');
     let total = 0;
-    const orderItems = [];
+    let orderItems = [];
+    let clientInfo = { name: '', address: '', observations: '' };
 
     if (newOrderBtn && orderSection) {
         // Inicializa a comanda
@@ -249,7 +220,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const commandsDiv = document.createElement('div');
             commandsDiv.id = 'order-commands';
             commandsDiv.className = 'order-commands';
-            commandsDiv.innerHTML = '<h3>Comanda</h3><p>Total: R$ 0.00</p><div id="order-items"></div>';
+            commandsDiv.innerHTML = `
+                <h3>Comanda</h3>
+                <div id="client-info">
+                    <div>Nome: <span id="client-name">[Nome do cliente]</span></div>
+                    <div>Endereço: <span id="client-address">[Endereço completo]</span></div>
+                    <div>Observações: <span id="client-observations">[Observações]</span></div>
+                </div>
+                <p>Total: R$ 0.00</p>
+                <div id="order-items"></div>
+            `;
             orderSection.parentNode.insertBefore(commandsDiv, orderSection.nextSibling);
         }
 
@@ -277,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const name = card.querySelector('h3').textContent;
                     const price = parseFloat(card.querySelector('p').textContent.replace('R$ ', ''));
                     const itemTotal = price * quantity;
-                    orderItems.push({ name, quantity, itemTotal });
+                    orderItems.push({ name, quantity, price, itemTotal });
                     total += itemTotal;
                     updateOrderCommands();
                     quantity = 0;
@@ -310,6 +290,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <option value="others">Outros</option>
                     </select>
                 </div>
+                <div id="client-inputs">
+                    <div class="form-group">
+                        <label for="client-name-input">Nome do Cliente</label>
+                        <input type="text" id="client-name-input" placeholder="Digite o nome do cliente">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-address-input">Endereço</label>
+                        <input type="text" id="client-address-input" placeholder="Digite o endereço completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-observations-input">Observações</label>
+                        <input type="text" id="client-observations-input" placeholder="Digite observações">
+                    </div>
+                </div>
                 <div id="qr-code" class="qr-code">QR-Code Placeholder</div>
                 <button class="btn btn-primary" id="finalize-payment">Finalizar</button>
             `;
@@ -326,11 +320,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             document.getElementById('finalize-payment').addEventListener('click', () => {
-                if (paymentMethod.value && (paymentMethod.value !== 'credit' && paymentMethod.value !== 'debit' || cardBrands.style.display === 'block' && document.getElementById('card-brand').value)) {
+                const paymentMethodValue = paymentMethod.value;
+                const cardBrandValue = document.getElementById('card-brand').value;
+                clientInfo = {
+                    name: document.getElementById('client-name-input')?.value || '[Nome do cliente]',
+                    address: document.getElementById('client-address-input')?.value || '[Endereço completo]',
+                    observations: document.getElementById('client-observations-input')?.value || '[Observações]'
+                };
+
+                if (paymentMethodValue && (paymentMethodValue !== 'credit' && paymentMethodValue !== 'debit' || cardBrands.style.display === 'block' && cardBrandValue)) {
+                    if (orderItems.length === 0) {
+                        alert('Adicione pelo menos um item ao pedido antes de finalizar.');
+                        return;
+                    }
                     createOrderCard();
                     paymentForm.remove();
-                    orderItems.length = 0;
+                    orderItems = [];
                     total = 0;
+                    clientInfo = { name: '', address: '', observations: '' };
                     updateOrderCommands();
                 } else {
                     alert('Selecione a forma de pagamento e, se aplicável, a bandeira.');
@@ -367,14 +374,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'kanban-card';
             card.innerHTML = cardData.html;
-            card.dataset.startTime = cardData.startTime;
+            card.dataset.orderId = cardData.orderId;
+            card.dataset.startTime = cardData.startTime || new Date().getTime();
             card.dataset.column = cardData.column;
+            card.dataset.columnTimes = cardData.columnTimes || {};
             document.getElementById(`${cardData.column}-cards`).appendChild(card);
 
             const okBtn = card.querySelector('.ok-btn');
-            if (okBtn) {
-                okBtn.addEventListener('click', () => moveCard(card));
-            }
+            const concludeBtn = card.querySelector('.conclude-btn');
+            if (okBtn) okBtn.addEventListener('click', () => moveCard(card));
+            if (concludeBtn) concludeBtn.addEventListener('click', () => concludeOrder(card));
+        });
+
+        // Adiciona botão de exclusão para cards
+        document.querySelectorAll('.kanban-card').forEach(card => {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = 'Excluir';
+            deleteBtn.addEventListener('click', () => {
+                if (confirm('Tem certeza que deseja excluir este card?')) {
+                    card.remove();
+                    let cards = JSON.parse(localStorage.getItem('kanbanCards') || '[]');
+                    cards = cards.filter(c => c.orderId !== card.dataset.orderId);
+                    localStorage.setItem('kanbanCards', JSON.stringify(cards));
+                }
+            });
+            card.appendChild(deleteBtn);
         });
 
         // Atualiza o tempo dinamicamente
@@ -394,9 +419,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const categoryFilter = document.getElementById('category-filter');
     const sortSelect = document.getElementById('sort-select');
-    const locationChartCanvas = document.getElementById('location-chart').getContext('2d');
-    const categoryChartCanvas = document.getElementById('category-chart').getContext('2d');
-    const minVsRealChartCanvas = document.getElementById('min-vs-real-chart').getContext('2d');
+    const locationChartCanvas = document.getElementById('location-chart')?.getContext('2d');
+    const categoryChartCanvas = document.getElementById('category-chart')?.getContext('2d');
+    const minVsRealChartCanvas = document.getElementById('min-vs-real-chart')?.getContext('2d');
     let locationChart, categoryChart, minVsRealChart;
 
     if (stockItems) {
@@ -593,12 +618,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function updateDashboard() {
-            // Destroy existing charts to prevent overlap
             if (locationChart) locationChart.destroy();
             if (categoryChart) categoryChart.destroy();
             if (minVsRealChart) minVsRealChart.destroy();
 
-            // Dados para Localização (Gráfico de Colunas)
             const locationData = {};
             stockData.forEach(item => {
                 const [store] = item.location.split(' - ');
@@ -614,55 +637,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }));
             locationChart = new Chart(locationChartCanvas, {
                 type: 'bar',
-                data: {
-                    labels: locations,
-                    datasets: locationDatasets
-                },
-                options: {
-                    scales: { y: { beginAtZero: true } },
-                    plugins: { legend: { position: 'top' } }
-                }
+                data: { labels: locations, datasets: locationDatasets },
+                options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
             });
 
-            // Dados para Categoria (Gráfico de Pizza)
             const categoryTotals = stockData.reduce((acc, item) => {
                 acc[item.category] = (acc[item.category] || 0) + item.quantity;
                 return acc;
             }, {});
             categoryChart = new Chart(categoryChartCanvas, {
                 type: 'pie',
-                data: {
-                    labels: Object.keys(categoryTotals),
-                    datasets: [{
-                        data: Object.values(categoryTotals),
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
-                    }]
-                },
+                data: { labels: Object.keys(categoryTotals), datasets: [{ data: Object.values(categoryTotals), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'] }] },
                 options: { plugins: { legend: { position: 'top' } } }
             });
 
-            // Dados para Estoque Mínimo x Real (Gráfico de Linha)
             const minVsRealData = stockData.map(item => ({ name: item.name, min: item.minStock, real: item.quantity }));
             minVsRealChart = new Chart(minVsRealChartCanvas, {
                 type: 'line',
-                data: {
-                    labels: minVsRealData.map(item => item.name),
-                    datasets: [{
-                        label: 'Estoque Mínimo',
-                        data: minVsRealData.map(item => item.min),
-                        borderColor: '#FF6384',
-                        fill: false
-                    }, {
-                        label: 'Estoque Real',
-                        data: minVsRealData.map(item => item.real),
-                        borderColor: '#36A2EB',
-                        fill: false
-                    }]
-                },
-                options: {
-                    scales: { y: { beginAtZero: true } },
-                    plugins: { legend: { position: 'top' } }
-                }
+                data: { labels: minVsRealData.map(item => item.name), datasets: [{ label: 'Estoque Mínimo', data: minVsRealData.map(item => item.min), borderColor: '#FF6384', fill: false }, { label: 'Estoque Real', data: minVsRealData.map(item => item.real), borderColor: '#36A2EB', fill: false }] },
+                options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
             });
         }
 
@@ -677,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-// Lógica para tela de Financeiro
+    // Lógica para tela de Financeiro
     const currentBalance = document.getElementById('current-balance');
     const periodIncome = document.getElementById('period-income');
     const periodExpenses = document.getElementById('period-expenses');
@@ -688,8 +681,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const expenseList = document.getElementById('expense-list');
     const payableList = document.getElementById('payable-list');
     const receivableList = document.getElementById('receivable-list');
-    const cashFlowChartCanvas = document.getElementById('cash-flow-chart').getContext('2d');
-    const expenseCategoryChartCanvas = document.getElementById('expense-category-chart').getContext('2d');
+    const cashFlowChartCanvas = document.getElementById('cash-flow-chart')?.getContext('2d');
+    const expenseCategoryChartCanvas = document.getElementById('expense-category-chart')?.getContext('2d');
     let cashFlowChart, expenseCategoryChart;
     let financeData = JSON.parse(localStorage.getItem('financeData') || '{"incomes": [], "expenses": [], "payables": [], "receivables": [], "balance": 0}');
     const addIncomeBtn = document.getElementById('add-income-btn');
@@ -873,12 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'line',
                 data: {
                     labels: cashFlowData.map(d => d.date.toLocaleDateString()),
-                    datasets: [{
-                        label: 'Fluxo de Caixa',
-                        data: cashFlowData.map((d, i) => cashFlowData.slice(0, i + 1).reduce((sum, curr) => sum + curr.value, 0)),
-                        borderColor: '#36A2EB',
-                        fill: false
-                    }]
+                    datasets: [{ label: 'Fluxo de Caixa', data: cashFlowData.map((d, i) => cashFlowData.slice(0, i + 1).reduce((sum, curr) => sum + curr.value, 0)), borderColor: '#36A2EB', fill: false }]
                 },
                 options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
             });
@@ -888,10 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'pie',
                 data: {
                     labels: expenseCategories,
-                    datasets: [{
-                        data: expenseCategories.map(cat => filteredExpenses.filter(e => e.category === cat).reduce((sum, e) => sum + e.value, 0)),
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
-                    }]
+                    datasets: [{ data: expenseCategories.map(cat => filteredExpenses.filter(e => e.category === cat).reduce((sum, e) => sum + e.value, 0)), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'] }]
                 },
                 options: { plugins: { legend: { position: 'top' } } }
             });
@@ -969,28 +954,49 @@ document.addEventListener('DOMContentLoaded', () => {
         orderIdCounter++;
         localStorage.setItem('orderIdCounter', orderIdCounter);
         const orderNumber = `#${orderIdCounter.toString().padStart(5, '0')}`;
+        const paymentMethod = document.getElementById('payment-method').value;
+        const cardBrand = document.getElementById('card-brand')?.value || '';
+        const itemsList = orderItems.map(item => `${item.name} (x${item.quantity}) - R$ ${item.itemTotal.toFixed(2)}`).join('<br>');
         const card = document.createElement('div');
         card.className = 'kanban-card';
+        card.dataset.orderId = orderNumber;
         card.innerHTML = `
             <div>Pedido: ${orderNumber}</div>
-            <div>[Nome do cliente]</div>
-            <div>[Endereço completo do cliente]</div>
-            <div>[Observações]</div>
+            <div>Nome: ${clientInfo.name}</div>
+            <div>Endereço: ${clientInfo.address}</div>
+            <div>Observações: ${clientInfo.observations}</div>
+            <div>Itens:<br>${itemsList}</div>
+            <div>Pagamento: ${paymentMethod}${cardBrand ? ` (${cardBrand})` : ''}</div>
             <div>R$ ${total.toFixed(2)}</div>
             <div class="time">0 min</div>
             <button class="ok-btn">OK</button>
         `;
         card.dataset.startTime = new Date().getTime();
         card.dataset.column = 'awaiting';
-        awaitingCards.appendChild(card);
+        card.dataset.columnTimes = { awaiting: 0, preparing: 0, delivering: 0, completed: 0 };
+        if (awaitingCards) {
+            awaitingCards.appendChild(card);
+        }
 
         const okBtn = card.querySelector('.ok-btn');
         okBtn.addEventListener('click', () => moveCard(card));
 
         // Salva o card no localStorage
         let cards = JSON.parse(localStorage.getItem('kanbanCards') || '[]');
-        cards.push({ html: card.outerHTML, startTime: card.dataset.startTime, column: card.dataset.column });
+        cards.push({
+            orderId: orderNumber,
+            html: card.innerHTML,
+            startTime: card.dataset.startTime,
+            column: card.dataset.column,
+            columnTimes: card.dataset.columnTimes,
+            items: orderItems,
+            total: total,
+            clientInfo: clientInfo,
+            paymentMethod: paymentMethod,
+            cardBrand: cardBrand
+        });
         localStorage.setItem('kanbanCards', JSON.stringify(cards));
+        playNotificationSound();
     }
 
     function moveCard(card) {
@@ -1002,58 +1008,350 @@ document.addEventListener('DOMContentLoaded', () => {
         }[currentColumn];
 
         if (nextColumn) {
+            const timeElement = card.querySelector('.time');
+            timeElement.textContent = '0 min';
+            card.dataset.startTime = new Date().getTime();
+            card.dataset.columnTimes[currentColumn] = parseInt(timeElement.textContent) || 0;
             card.dataset.column = nextColumn;
-            document.getElementById(`${nextColumn}-cards`).appendChild(card);
-            if (nextColumn === 'completed') {
-                card.querySelector('.ok-btn').remove();
+
+            let buttonHtml = nextColumn === 'completed' ? '<button class="conclude-btn">Concluir</button>' : '<button class="ok-btn">OK</button>';
+            card.innerHTML = card.innerHTML.replace(/<button class="ok-btn">OK<\/button>|<button class="conclude-btn">Concluir<\/button>/, buttonHtml);
+
+            const targetColumn = document.getElementById(`${nextColumn}-cards`);
+            if (targetColumn) {
+                targetColumn.appendChild(card);
             }
+
+            const okBtn = card.querySelector('.ok-btn');
+            const concludeBtn = card.querySelector('.conclude-btn');
+            if (okBtn) okBtn.addEventListener('click', () => moveCard(card));
+            if (concludeBtn) concludeBtn.addEventListener('click', () => concludeOrder(card));
+
             playNotificationSound();
 
-            // Atualiza o localStorage
             let cards = JSON.parse(localStorage.getItem('kanbanCards') || '[]');
-            cards = cards.map(c => c.html === card.outerHTML ? { ...c, column: nextColumn } : c);
+            cards = cards.map(c => c.orderId === card.dataset.orderId ? { ...c, column: nextColumn, html: card.innerHTML, columnTimes: card.dataset.columnTimes, startTime: card.dataset.startTime } : c);
             localStorage.setItem('kanbanCards', JSON.stringify(cards));
         }
+    }
+
+    function concludeOrder(card) {
+        const timeElement = card.querySelector('.time');
+        timeElement.textContent = '0 min';
+        card.dataset.startTime = null;
+        card.dataset.columnTimes.completed = 0;
+
+        const concludeBtn = card.querySelector('.conclude-btn');
+        concludeBtn.removeEventListener('click', concludeOrder);
+        concludeBtn.textContent = 'Concluído';
+        concludeBtn.className = 'conclude-btn completed';
+        concludeBtn.disabled = true;
+
+        let cards = JSON.parse(localStorage.getItem('kanbanCards') || '[]');
+        cards = cards.map(c => c.orderId === card.dataset.orderId ? { ...c, html: card.innerHTML, columnTimes: card.dataset.columnTimes, startTime: null } : c);
+        localStorage.setItem('kanbanCards', JSON.stringify(cards));
     }
 
     function updateKanbanTimes() {
         const cards = document.querySelectorAll('.kanban-card');
         cards.forEach(card => {
-            const startTime = card.dataset.startTime;
+            const startTime = parseInt(card.dataset.startTime) || 0;
+            if (!startTime) return;
             const now = new Date().getTime();
-            const timeDiff = Math.floor((now - startTime) / 60000); // Diferença em minutos
+            const timeDiff = Math.floor((now - startTime) / 60000);
             const timeElement = card.querySelector('.time');
-            let colorClass;
+            if (!timeElement) return;
 
-            if (card.dataset.column === 'delivering') {
+            let colorClass;
+            const column = card.dataset.column;
+            if (column === 'delivering') {
                 if (timeDiff <= 10) colorClass = 'green';
                 else if (timeDiff <= 25) colorClass = 'orange';
                 else colorClass = 'red';
-            } else {
+            } else if (column === 'awaiting' || column === 'preparing') {
                 if (timeDiff <= 5) colorClass = 'green';
                 else if (timeDiff <= 10) colorClass = 'orange';
                 else colorClass = 'red';
+            } else {
+                colorClass = 'green';
             }
 
             timeElement.textContent = `${timeDiff} min`;
             timeElement.className = `time ${colorClass}`;
         });
-        setTimeout(updateKanbanTimes, 60000); // Atualiza a cada minuto
+        setTimeout(updateKanbanTimes, 60000);
     }
 
     function updateOrderCommands() {
         const orderItemsDiv = document.getElementById('order-items');
-        orderItemsDiv.innerHTML = '';
-        orderItems.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'order-item';
-            itemDiv.innerHTML = `${item.name} (x${item.quantity}) - R$ ${item.itemTotal.toFixed(2)}`;
-            orderItemsDiv.appendChild(itemDiv);
-        });
-        document.querySelector('.order-commands p').textContent = `Total: R$ ${total.toFixed(2)}`;
+        if (orderItemsDiv) {
+            orderItemsDiv.innerHTML = orderItems.map(item => `
+                <div class="order-item">${item.name} (x${item.quantity}) - R$ ${item.itemTotal.toFixed(2)}</div>
+            `).join('');
+            document.querySelector('.order-commands p').textContent = `Total: R$ ${total.toFixed(2)}`;
+            document.getElementById('client-name').textContent = clientInfo.name || '[Nome do cliente]';
+            document.getElementById('client-address').textContent = clientInfo.address || '[Endereço completo]';
+            document.getElementById('client-observations').textContent = clientInfo.observations || '[Observações]';
+        }
     }
 
     function playNotificationSound() {
-        const audio = new Audio('audio/audio-finalizado.mp3');
+        const audio = new Audio('../audio/audio-finalizado.mp3');
         audio.play().catch(error => console.log('Erro ao reproduzir áudio:', error));
-    };
+    }
+
+    // Lógica para tela de Produtos
+    const addProductBtn = document.getElementById('add-product-btn');
+    const productModal = document.getElementById('product-modal');
+    const productFormData = document.getElementById('product-form-data');
+    const cancelProductBtn = document.getElementById('cancel-product-btn');
+    let productIdCounter = parseInt(localStorage.getItem('productIdCounter') || '0');
+    let products = JSON.parse(localStorage.getItem('products') || '[]');
+
+    if (addProductBtn && productModal) {
+        addProductBtn.addEventListener('click', () => {
+            productModal.style.display = 'flex';
+            productFormData.reset();
+            document.getElementById('product-sku').value = '';
+            document.getElementById('product-cost').value = '0.00';
+            document.getElementById('availability-status').textContent = 'Verificando...';
+            document.getElementById('ingredients-list').innerHTML = '';
+            document.getElementById('product-image').value = '';
+        });
+
+        productFormData.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const category = document.getElementById('product-category').value;
+            if (!category) {
+                alert('Por favor, selecione uma categoria!');
+                return;
+            }
+            productIdCounter++;
+            localStorage.setItem('productIdCounter', productIdCounter);
+            const skuBase = category.charAt(0).toUpperCase() + productIdCounter.toString().padStart(4, '0');
+            const sku = `${skuBase}-${new Date().getFullYear()}`;
+            const name = document.getElementById('product-name').value;
+            const description = document.getElementById('product-description').value;
+            const salePrice = parseFloat(document.getElementById('product-sale-price').value) || 0.00;
+            let cost = parseFloat(document.getElementById('product-cost').value) || 0.00;
+            const imageInput = document.getElementById('product-image');
+            const imageFile = imageInput.files[0];
+
+            // Coletar insumos
+            const ingredients = [];
+            document.querySelectorAll('#ingredients-list .ingredient-row').forEach(row => {
+                const name = row.querySelector('.ingredient-name').value;
+                const quantity = parseFloat(row.querySelector('.ingredient-quantity').value) || 0;
+                const unit = row.querySelector('.ingredient-unit').value;
+                if (name && quantity > 0) ingredients.push({ name, quantity, unit });
+            });
+
+            // Calcular custo com base no estoque
+            let totalCost = 0;
+            const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
+            ingredients.forEach(ingredient => {
+                const stockItem = stockData.find(item => item.name.toLowerCase() === ingredient.name.toLowerCase());
+                if (stockItem) {
+                    totalCost += (stockItem.cost * ingredient.quantity) / (stockItem.unit === 'un' ? 1 : stockItem.unit === 'g' ? 1000 : 1000);
+                }
+            });
+            document.getElementById('product-cost').value = totalCost.toFixed(2);
+
+            // Verificar disponibilidade
+            let isAvailable = true;
+            ingredients.forEach(ingredient => {
+                const stockItem = stockData.find(item => item.name.toLowerCase() === ingredient.name.toLowerCase());
+                if (stockItem && stockItem.quantity < ingredient.quantity) {
+                    isAvailable = false;
+                }
+            });
+            document.getElementById('availability-status').textContent = isAvailable ? 'Disponível' : 'Indisponível';
+            document.getElementById('availability-status').className = isAvailable ? '' : 'unavailable';
+
+            const newProduct = {
+                id: productIdCounter,
+                sku: sku,
+                name: name,
+                description: description,
+                salePrice: salePrice,
+                cost: totalCost,
+                category: category,
+                ingredients: ingredients,
+                availability: isAvailable,
+                image: imageFile ? imageFile.name : null
+            };
+
+            products.push(newProduct);
+            localStorage.setItem('products', JSON.stringify(products));
+            productModal.style.display = 'none';
+            loadProductTable();
+        });
+
+        document.getElementById('add-ingredient-btn')?.addEventListener('click', () => {
+            const ingredientsList = document.getElementById('ingredients-list');
+            if (ingredientsList) {
+                const row = document.createElement('div');
+                row.className = 'ingredient-row';
+                row.innerHTML = `
+                    <input type="text" class="ingredient-name" placeholder="Nome do insumo">
+                    <input type="number" class="ingredient-quantity" placeholder="Quantidade" min="0" step="0.01">
+                    <select class="ingredient-unit">
+                        <option value="g">Gramas (g)</option>
+                        <option value="ml">Mililitros (ml)</option>
+                        <option value="un">Unidades (un)</option>
+                    </select>
+                    <button type="button" class="btn btn-small remove-ingredient-btn">Remover</button>
+                `;
+                ingredientsList.appendChild(row);
+                row.querySelector('.remove-ingredient-btn').addEventListener('click', () => {
+                    row.remove();
+                    updateProductCost();
+                });
+            }
+        });
+
+        document.getElementById('add-option-btn').addEventListener('click', () => {
+            const optionsList = document.getElementById('options-list');
+            if (optionsList) {
+                const row = document.createElement('div');
+                row.className = 'option-row';
+                row.innerHTML = `
+                    <input type="text" class="option-name" placeholder="Nome da opção">
+                    <input type="text" class="option-value" placeholder="Valor da opção">
+                    <button type="button" class="btn btn-small remove-option-btn">Remover</button>
+                `;
+                optionsList.appendChild(row);
+                row.querySelector('.remove-option-btn').addEventListener('click', () => {
+                    row.remove();
+                });
+            }
+        });
+
+        cancelProductBtn.addEventListener('click', () => {
+            productModal.style.display = 'none';
+        });
+
+        function updateProductCost() {
+            const ingredients = document.querySelectorAll('#ingredients-list .ingredient-row');
+            let totalCost = 0;
+            const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
+            ingredients.forEach(row => {
+                const name = row.querySelector('.ingredient-name').value;
+                const quantity = parseFloat(row.querySelector('.ingredient-quantity').value) || 0;
+                const unit = row.querySelector('.ingredient-unit').value;
+                const stockItem = stockData.find(item => item.name.toLowerCase() === name.toLowerCase());
+                if (stockItem) {
+                    totalCost += (stockItem.cost * quantity) / (stockItem.unit === 'un' ? 1 : stockItem.unit === 'g' ? 1000 : 1000);
+                }
+            });
+            document.getElementById('product-cost').value = totalCost.toFixed(2);
+            checkAvailability();
+        }
+
+        function checkAvailability() {
+            const ingredients = document.querySelectorAll('#ingredients-list .ingredient-row');
+            let isAvailable = true;
+            const stockData = JSON.parse(localStorage.getItem('stockData') || '[]');
+            ingredients.forEach(row => {
+                const name = row.querySelector('.ingredient-name').value;
+                const quantity = parseFloat(row.querySelector('.ingredient-quantity').value) || 0;
+                const stockItem = stockData.find(item => item.name.toLowerCase() === name.toLowerCase());
+                if (stockItem && stockItem.quantity < quantity) {
+                    isAvailable = false;
+                }
+            });
+            document.getElementById('availability-status').textContent = isAvailable ? 'Disponível' : 'Indisponível';
+            document.getElementById('availability-status').className = isAvailable ? '' : 'unavailable';
+        }
+
+        document.querySelectorAll('#ingredients-list .ingredient-row input').forEach(input => {
+            input.addEventListener('input', updateProductCost);
+        });
+
+        function loadProductTable() {
+            const productTable = document.getElementById('product-table');
+            if (productTable) {
+                productTable.querySelector('tbody').innerHTML = '';
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.name}</td>
+                        <td>${product.sku}</td>
+                        <td>R$ ${product.salePrice.toFixed(2)}</td>
+                        <td>R$ ${product.cost.toFixed(2)}</td>
+                        <td>${product.category}</td>
+                        <td>${product.availability ? 'Disponível' : 'Indisponível'}</td>
+                        <td><select class="btn-select"><option value="">Ações</option><option value="edit">Editar</option><option value="remove">Remover</option></select></td>
+                    `;
+                    productTable.appendChild(row);
+
+                    row.querySelector('.btn-select').addEventListener('change', (e) => {
+                        const action = e.target.value;
+                        const index = Array.from(productTable.querySelector('tbody').children).indexOf(row);
+                        if (action === 'edit') {
+                            productModal.style.display = 'flex';
+                            const product = products[index];
+                            document.getElementById('product-name').value = product.name;
+                            document.getElementById('product-description').value = product.description;
+                            document.getElementById('product-sale-price').value = product.salePrice;
+                            document.getElementById('product-cost').value = product.cost;
+                            document.getElementById('product-category').value = product.category;
+                            document.getElementById('product-sku').value = product.sku;
+                            document.getElementById('availability-status').textContent = product.availability ? 'Disponível' : 'Indisponível';
+                            document.getElementById('ingredients-list').innerHTML = '';
+                            product.ingredients.forEach(ingredient => {
+                                const row = document.createElement('div');
+                                row.className = 'ingredient-row';
+                                row.innerHTML = `
+                                    <input type="text" class="ingredient-name" value="${ingredient.name}" placeholder="Nome do insumo">
+                                    <input type="number" class="ingredient-quantity" value="${ingredient.quantity}" placeholder="Quantidade" min="0" step="0.01">
+                                    <select class="ingredient-unit">
+                                        <option value="g" ${ingredient.unit === 'g' ? 'selected' : ''}>Gramas (g)</option>
+                                        <option value="ml" ${ingredient.unit === 'ml' ? 'selected' : ''}>Mililitros (ml)</option>
+                                        <option value="un" ${ingredient.unit === 'un' ? 'selected' : ''}>Unidades (un)</option>
+                                    </select>
+                                    <button type="button" class="btn btn-small remove-ingredient-btn">Remover</button>
+                                `;
+                                document.getElementById('ingredients-list').appendChild(row);
+                                row.querySelector('.remove-ingredient-btn').addEventListener('click', () => {
+                                    row.remove();
+                                    updateProductCost();
+                                });
+                            });
+                            productFormData.onsubmit = (e) => {
+                                e.preventDefault();
+                                products[index] = {
+                                    id: product.id,
+                                    sku: document.getElementById('product-sku').value,
+                                    name: document.getElementById('product-name').value,
+                                    description: document.getElementById('product-description').value,
+                                    salePrice: parseFloat(document.getElementById('product-sale-price').value) || 0.00,
+                                    cost: parseFloat(document.getElementById('product-cost').value) || 0.00,
+                                    category: document.getElementById('product-category').value,
+                                    ingredients: Array.from(document.querySelectorAll('#ingredients-list .ingredient-row')).map(row => ({
+                                        name: row.querySelector('.ingredient-name').value,
+                                        quantity: parseFloat(row.querySelector('.ingredient-quantity').value) || 0,
+                                        unit: row.querySelector('.ingredient-unit').value
+                                    })),
+                                    availability: document.getElementById('availability-status').textContent === 'Disponível',
+                                    image: document.getElementById('product-image').files[0] ? document.getElementById('product-image').files[0].name : product.image
+                                };
+                                localStorage.setItem('products', JSON.stringify(products));
+                                productModal.style.display = 'none';
+                                loadProductTable();
+                            };
+                        } else if (action === 'remove') {
+                            if (confirm('Tem certeza que deseja remover este produto?')) {
+                                products.splice(index, 1);
+                                localStorage.setItem('products', JSON.stringify(products));
+                                loadProductTable();
+                            }
+                        }
+                        e.target.value = '';
+                    });
+                });
+            }
+        }
+        loadProductTable();
+    }
+});
