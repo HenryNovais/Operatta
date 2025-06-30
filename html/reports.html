@@ -29,106 +29,115 @@
                 </ul>
             </nav>
         </aside>
-        <main class="main-content">
-            <header class="header">
-                <h1>Relatórios</h1>
-                <div class="admin-actions">
-                    <button class="btn btn-primary" id="generate-report">Gerar Relatório</button>
-                    <button class="btn btn-secondary" id="export-report">Exportar</button>
-                    <button class="btn btn-secondary" id="print-report">Imprimir</button>
-                    <button class="btn btn-secondary" id="visualize-chart">Visualizar em Gráfico</button>
-                    <button class="btn btn-secondary" id="share-report">Compartilhar</button>
-                    <button class="btn btn-secondary" id="schedule-report">Agendar</button>
-                    <button class="btn btn-secondary" id="clear-filters">Limpar Filtros</button>
-                </div>
+        <div class="main-content">
+            <h2>Relatórios</h2>
+
+            <div class="report-actions">
+                <button id="generate-report" class="btn btn-primary">Gerar Relatório</button>
+                <button id="export-report" class="btn btn-secondary">Exportar</button>
+                <button id="print-report" class="btn btn-secondary">Imprimir</button>
+                <button id="visualize-chart" class="btn btn-secondary">Visualizar em Gráfico</button>
+                <button id="share-report" class="btn btn-secondary">Compartilhar</button>
+                <button id="schedule-report" class="btn btn-secondary">Agendar</button>
+                <button id="clear-filters" class="btn btn-danger">Limpar Filtros</button>
             </div>
+
             <div class="report-filters">
                 <div class="form-group">
                     <label for="report-type">Tipo de Relatório</label>
-                    <select id="report-type">
+                    <select id="report-type" required>
                         <option value="">Selecione o tipo</option>
                         <option value="sales-period">Vendas por Período</option>
                         <option value="sales-product">Vendas por Produto</option>
                         <option value="sales-category">Vendas por Categoria</option>
                         <option value="sales-payment">Vendas por Forma de Pagamento</option>
                         <option value="sales-channel">Vendas por Canal</option>
-                        <option value="sales-ticket">Ticket Médio</option>
-                        <option value="sales-peak">Horários de Pico</option>
+                        <option value="average-ticket">Ticket Médio</option>
+                        <option value="peak-hours">Horários de Pico</option>
                         <option value="sales-attendant">Vendas por Atendente</option>
-                        <option value="sales-discounts">Descontos Concedidos</option>
-                        <option value="finance-revenue">Receitas e Despesas</option>
-                        <option value="finance-cashflow">Fluxo de Caixa</option>
-                        <option value="finance-profit">Lucratividade</option>
-                        <option value="finance-costs">Custos por Produto</option>
-                        <option value="finance-taxes">Impostos</option>
+                        <option value="discounts">Descontos Concedidos</option>
+                        <option value="revenue-expense">Receitas e Despesas</option>
+                        <option value="cash-flow">Fluxo de Caixa</option>
+                        <option value="profitability">Lucratividade</option>
+                        <option value="cost-product">Custos por Produto</option>
+                        <option value="taxes">Impostos</option>
                         <option value="stock-current">Estoque Atual</option>
                         <option value="stock-movement">Movimentação de Estoque</option>
                         <option value="stock-low">Produtos com Baixo Estoque</option>
-                        <option value="stock-losses">Perdas de Estoque</option>
+                        <option value="stock-loss">Perdas de Estoque</option>
                         <option value="stock-turnover">Giro de Estoque</option>
                         <option value="stock-cost">Custo do Estoque</option>
-                        <option value="clients-list">Cadastro de Clientes</option>
-                        <option value="clients-frequency">Frequência de Compras</option>
-                        <option value="clients-spending">Gastos por Cliente</option>
-                        <option value="marketing-campaigns">Eficácia de Campanhas</option>
-                        <option value="marketing-coupons">Cupons Utilizados</option>
+                        <option value="client-register">Cadastro de Clientes</option>
+                        <option value="purchase-frequency">Frequência de Compras</option>
+                        <option value="client-spending">Gastos por Cliente</option>
+                        <option value="campaign-efficacy">Eficácia de Campanhas</option>
+                        <option value="coupons-used">Cupons Utilizados</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label for="date-filter">Período</label>
-                    <select id="date-filter">
+                    <label for="period">Período</label>
+                    <select id="period">
                         <option value="today">Hoje</option>
                         <option value="yesterday">Ontem</option>
-                        <option value="week">Última Semana</option>
-                        <option value="month">Último Mês</option>
+                        <option value="last-week">Última Semana</option>
+                        <option value="last-month">Último Mês</option>
                         <option value="custom">Personalizado</option>
                     </select>
                 </div>
-                <div class="form-group" id="custom-date" style="display: none;">
-                    <label for="custom-start-date">Data Início</label>
-                    <input type="date" id="custom-start-date">
-                    <label for="custom-end-date">Data Fim</label>
-                    <input type="date" id="custom-end-date">
-                </div>
+
                 <div class="form-group">
-                    <label for="product-filter">Produto</label>
-                    <select id="product-filter">
-                        <option value="">Todos</option>
+                    <label for="start-date">Data Início</label>
+                    <input type="date" id="start-date">
+                </div>
+
+                <div class="form-group">
+                    <label for="end-date">Data Fim</label>
+                    <input type="date" id="end-date">
+                </div>
+
+                <div class="form-group">
+                    <label for="product">Produto</label>
+                    <select id="product">
+                        <option value="all">Todos</option>
+                        <!-- Preencher dinamicamente com produtos do localStorage -->
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label for="category-filter">Categoria</label>
-                    <select id="category-filter">
-                        <option value="">Todas</option>
+                    <label for="category">Categoria</label>
+                    <select id="category">
+                        <option value="all">Todas</option>
+                        <!-- Preencher dinamicamente com categorias do localStorage -->
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label for="payment-filter">Forma de Pagamento</label>
-                    <select id="payment-filter">
-                        <option value="">Todas</option>
+                    <label for="payment-method">Forma de Pagamento</label>
+                    <select id="payment-method">
+                        <option value="all">Todas</option>
                         <option value="credit">Crédito</option>
                         <option value="debit">Débito</option>
                         <option value="cash">Dinheiro</option>
                         <option value="pix">Pix</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label for="channel-filter">Canal de Venda</label>
-                    <select id="channel-filter">
-                        <option value="">Todos</option>
+                    <label for="sales-channel">Canal de Venda</label>
+                    <select id="sales-channel">
+                        <option value="all">Todos</option>
                         <option value="counter">Balcão</option>
                         <option value="delivery">Delivery</option>
                         <option value="app">Aplicativo</option>
                     </select>
                 </div>
             </div>
+
             <div class="report-output" id="report-output">
-                <div class="dashboard-card">
-                    <h3>Relatório Gerado</h3>
-                    <div id="report-content">
-                        <p>Selecione um tipo de relatório e aplique os filtros para visualizar os dados.</p>
-                    </div>
-                    <canvas id="report-chart" style="display: none;"></canvas>
+                <div id="dashboard-section">
+                    <h3>Visão Geral do Negócio</h3>
+                    <!-- Dados e gráficos serão inseridos via JavaScript -->
                 </div>
             </div>
         </div>

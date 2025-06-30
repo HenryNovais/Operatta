@@ -45,7 +45,13 @@
                 <div class="form-group">
                     <select id="category-filter">
                         <option value="">Todas as Categorias</option>
-                    </select>
+                        <option value="sanduíches">Sanduíches</option>
+                        <option value="combos">Combos</option>
+                        <option value="bebidas">Bebidas</option>
+                        <option value="promoções">Promoções</option>
+                        <option value="sobremesas">Sobremesas</option>
+                        <option value="adicionais">Adicionais</option>
+                </select>
                 </div>
                 <div class="form-group">
                     <select id="availability-filter">
@@ -81,12 +87,14 @@
         </div>
     </div>
     <!-- Modal para adicionar/editar produto -->
-   <div id="product-form" style="display: none;">
-            <h3 id="form-title">Adicionar Produto</h3>
+   <div id="product-form" class="modal">
+        <div class="modal-content">
+            <h2 id="form-title">Adicionar Produto</h2>
             <form id="product-form-data">
+                <input type="hidden" id="product-id">
                 <div class="form-group">
                     <label for="product-image">Imagem:</label>
-                    <input type="file" id="product-image" accept="image/*">
+                    <input type="text" id="product-image" placeholder="URL da imagem">
                 </div>
                 <div class="form-group">
                     <label for="product-name">Nome:</label>
@@ -97,12 +105,12 @@
                     <textarea id="product-description"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="product-sale-price">Preço de Venda:</label>
-                    <input type="number" id="product-sale-price" step="0.01" required>
+                    <label for="product-price">Preço de Venda:</label>
+                    <input type="number" id="product-price" step="0.01" min="0" required>
                 </div>
                 <div class="form-group">
                     <label for="product-cost">Custo:</label>
-                    <input type="number" id="product-cost" step="0.01" value="0.00" readonly>
+                    <input type="text" id="product-cost" readonly>
                 </div>
                 <div class="form-group">
                     <label for="product-category">Categoria:</label>
@@ -119,22 +127,23 @@
                 </div>
                 <div class="form-group">
                     <label>Disponibilidade:</label>
-                    <span id="availability-status">Verificando...</span>
+                    <p id="availability-status">Verificando...</p>
                 </div>
                 <div class="form-group">
                     <label>Insumos:</label>
                     <div id="ingredients-list"></div>
-                    <button type="button" id="add-ingredient-btn">Adicionar Insumo</button>
+                    <button type="button" id="add-ingredient-btn" class="btn btn-secondary">Adicionar Insumo</button>
                 </div>
                 <div class="form-group">
                     <label>Opções:</label>
                     <div id="options-list"></div>
-                    <button type="button" id="add-option-btn">Adicionar Opção</button>
+                    <button type="button" id="add-option-btn" class="btn btn-secondary">Adicionar Opção</button>
                 </div>
                 <button type="submit" class="btn btn-primary">Salvar</button>
                 <button type="button" id="cancel-product-btn" class="btn btn-secondary">Cancelar</button>
             </form>
         </div>
+    </div>
     <!-- Modal para gerenciar categorias -->
     <div class="modal" id="categories-modal" style="display: none;">
         <div class="modal-content">

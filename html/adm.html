@@ -65,8 +65,8 @@
                     <div class="section-actions">
                         <button class="btn btn-primary" id="add-user-btn">Adicionar Usuário</button>
                         <input type="text" id="search-user" class="admin-search" placeholder="Buscar usuário">
-                        <select id="filter-user" class="btn btn-secondary">
-                            <option value="">Filtrar por</option>
+                        <select id="filter-users">
+                            <option value="all">Todos</option>
                             <option value="active">Ativos</option>
                             <option value="inactive">Inativos</option>
                             <option value="admin">Administradores</option>
@@ -175,21 +175,7 @@
                         <button class="btn btn-secondary" id="restore-btn">Restaurar</button>
                     </div>
                 </div>
-                <div class="admin-section">
-                    <h3>Relatórios e Análises</h3>
-                    <div class="section-actions">
-                        <select id="report-type" class="btn btn-secondary">
-                            <option value="">Selecione um Relatório</option>
-                            <option value="sales">Vendas</option>
-                            <option value="stock">Estoque</option>
-                            <option value="finance">Financeiro</option>
-                            <option value="performance">Desempenho</option>
-                        </select>
-                        <button class="btn btn-primary" id="generate-report">Gerar Relatório</button>
-                        <button class="btn btn-secondary" id="export-report">Exportar</button>
-                    </div>
-                    <div id="report-output" class="report-output"></div>
-                </div>
+                
             </section>
         </main>
     </div>
