@@ -1,0 +1,14 @@
+# Ignorar pasta node_modules
+node_modules/
+
+# Ignorar arquivos temporários e logs
+*.log
+*.tmp
+
+# Ignorar arquivos grandes (opcional, se desejar)
+*.mp4
+*.pdf
+
+# Ignorar arquivos de sistema
+Thumbs.db
+Desktop.ini
