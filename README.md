@@ -25,8 +25,7 @@ O Operatta visa contribuir com a gestão do negócio por meio de uma interface i
 - HTML5  
 - CSS3  
 - JavaScript  
-- Figma (prototipagem)  
-- Miro (mapa de jornada e processos)  
+- Figma (prototipagem)
 - Canva (material de apresentação)
 
 ---
@@ -40,7 +39,6 @@ O Operatta visa contribuir com a gestão do negócio por meio de uma interface i
 1. Clone o repositório:
    ```bash
    git clone https://github.com/raposoofc/Operatta.git
-
 
 
 
@@ -62,13 +60,7 @@ Desenvolvedores:
 Em caso de dúvidas, sugestões ou colaborações, sinta-se à vontade para abrir uma issue ou entrar em contato com a equipe.
 
 
+Siga, curta, compartilhe, ative as notificações lá do Canal no YouTube: https://www.youtube.com/@raposowebdev
 
 ---
 
-### ✅ Próximos passos sugeridos:
-- Copie esse conteúdo e salve como `README.md` na raiz do seu repositório.
-- Faça o commit e push com:
-  ```bash
-  git add README.md
-  git commit -m "Adiciona README com descrição do projeto Operatta"
-  git push origin main
