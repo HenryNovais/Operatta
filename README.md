@@ -60,7 +60,5 @@ Desenvolvedores:
 Em caso de dúvidas, sugestões ou colaborações, sinta-se à vontade para abrir uma issue ou entrar em contato com a equipe.
 
 
-Siga, curta, compartilhe, ative as notificações lá do Canal no YouTube: https://www.youtube.com/@raposowebdev
-
 ---
 
